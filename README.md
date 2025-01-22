@@ -34,5 +34,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 You need to download the components below:
 
 ```cli
-
+pnpm dlx shadcn@latest add form
+pnpm dlx shadcn@latest add card
+pnpm dlx shadcn@latest add input
 ```
