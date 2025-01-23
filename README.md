@@ -36,5 +36,6 @@ You need to download the components below:
 ```cli
 pnpm dlx shadcn@latest add form
 pnpm dlx shadcn@latest add card
-pnpm dlx shadcn@latest add input
+pnpm dlx shadcn@latest add sidebar
+pnpm dlx shadcn@latest add breadcrumb
 ```

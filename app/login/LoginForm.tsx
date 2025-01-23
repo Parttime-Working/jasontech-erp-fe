@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +36,7 @@ export default function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [message, setMessage] = useState("");
+  const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,6 +61,8 @@ export default function LoginForm({
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message); // 顯示成功訊息
+        // 登入成功，跳轉到管理面板
+        router.push('/dashboard');
       } else {
         setMessage(data.error || "Login failed"); // 顯示錯誤訊息
       }
@@ -73,7 +77,7 @@ export default function LoginForm({
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
           <CardDescription className="text-center">
-            Enter your email below to login to your account
+            Enter your info below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
