@@ -1,9 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Firefox 相容性修復 */
+@-moz-document url-prefix() {
+  .grid {
+    display: -ms-grid;
+    display: grid;
+  }
+
+  /* 確保 CSS Grid 在 Firefox 中正常工作 */
+  .grid-rows-\[20px_1fr_20px\] {
+    grid-template-rows: 20px 1fr 20px;
+  }
 }
 
 @layer base {
@@ -80,9 +91,10 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
