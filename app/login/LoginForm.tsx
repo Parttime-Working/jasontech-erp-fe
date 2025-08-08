@@ -61,6 +61,10 @@ export default function LoginForm({
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message); // 顯示成功訊息
+        // 存儲 JWT 令牌到本地存儲
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
         // 登入成功，跳轉到管理面板
         router.push('/dashboard');
       } else {
