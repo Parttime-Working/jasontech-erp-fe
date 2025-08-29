@@ -21,8 +21,15 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      return null;
+    };
+
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || getCookie('token');
 
       if (!token) {
         router.push('/login');
@@ -39,6 +46,8 @@ export default function DashboardPage() {
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('token');
+        // 清除 cookie
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         router.push('/login');
       } finally {
         setLoading(false);

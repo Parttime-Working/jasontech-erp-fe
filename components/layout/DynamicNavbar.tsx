@@ -59,10 +59,8 @@ function UserActions() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState<{ username: string; role: string } | null>(null);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
@@ -75,21 +73,12 @@ function UserActions() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    // 清除 cookie
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     setIsAuthenticated(false);
     setUserInfo(null);
     router.push('/login');
   };
-
-  if (!mounted) {
-    // 在水合完成前，顯示佔位符
-    return (
-      <div className="flex items-center gap-4 ml-auto">
-        <Link href="/login">
-          <Button size="sm">登入</Button>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="flex items-center gap-4 ml-auto">
@@ -131,10 +120,8 @@ function NavigationItems() {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState<{ username: string; role: string } | null>(null);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
@@ -145,9 +132,6 @@ function NavigationItems() {
 
   // 過濾導航項目
   const visibleNavItems = navItems.filter(item => {
-    // 如果還沒有 mounted，只顯示不需要認證的項目
-    if (!mounted) return !item.requireAuth;
-
     // 如果需要認證但用戶未登入，不顯示
     if (item.requireAuth && !isAuthenticated) return false;
 
@@ -220,6 +204,11 @@ function NavigationItems() {
 
 export function DynamicNavbar() {
   const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // 如果在登入頁面，不顯示 Navbar
   if (pathname === "/login") return null;
@@ -235,10 +224,10 @@ export function DynamicNavbar() {
       </div>
 
       {/* Navigation Items */}
-      <NavigationItems />
+      {isClient && <NavigationItems />}
 
       {/* User Actions */}
-      <UserActions />
+      {isClient && <UserActions />}
     </header>
   );
 }

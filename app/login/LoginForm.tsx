@@ -61,8 +61,11 @@ export default function LoginForm({
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message); // 顯示成功訊息
-        // 存儲 JWT 令牌到本地存儲
+        // 存儲 JWT 令牌到 cookie 和 localStorage (為了相容性)
         if (data.token) {
+          // 設置 cookie (用於 middleware 身份驗證)
+          document.cookie = `token=${data.token}; path=/; max-age=86400; SameSite=strict`;
+          // 也存到 localStorage (用於客戶端身份驗證)
           localStorage.setItem('token', data.token);
         }
         // 登入成功，跳轉到管理面板
