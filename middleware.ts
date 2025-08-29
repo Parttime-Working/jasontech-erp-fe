@@ -2,23 +2,21 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // 在這裡添加您的 middleware 邏輯
-  // 例如：身份驗證檢查、重定向等
+    const token = request.cookies.get('token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
+    const protectedPaths = ['/dashboard', '/dashboard/account-management'];
 
-  // 目前只是簡單地繼續請求
-  return NextResponse.next();
+    if (protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
+        if (!token) {
+            const loginUrl = new URL('/login', request.url);
+            loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
+            return NextResponse.redirect(loginUrl);
+        }
+        // 未來加 JWT 驗證，但現在簡單就好
+    }
+
+    return NextResponse.next();
 }
 
-// 配置 middleware 應該在哪些路徑上運行
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
