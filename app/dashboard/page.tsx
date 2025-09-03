@@ -29,6 +29,9 @@ export default function DashboardPage() {
     };
 
     const checkAuth = async () => {
+      // 確保只在客戶端執行
+      if (typeof window === 'undefined') return;
+
       const token = localStorage.getItem('token') || getCookie('token');
 
       if (!token) {

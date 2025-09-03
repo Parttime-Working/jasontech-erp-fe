@@ -5,7 +5,6 @@ export async function POST(req: Request) {
   try {
     // 解析請求體
     const body = await req.json();
-    console.log(body);
 
     // 驗證輸入
     if (!body.username || !body.password) {

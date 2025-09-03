@@ -7,7 +7,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Package2, LogOut, User, Settings, Home, Users, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 
 // 定義導航項目的類型
 interface NavItem {
@@ -61,6 +60,9 @@ function UserActions() {
   const [userInfo, setUserInfo] = useState<{ username: string; role: string } | null>(null);
 
   useEffect(() => {
+    // 確保只在客戶端執行
+    if (typeof window === 'undefined') return;
+
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
