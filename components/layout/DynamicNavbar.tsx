@@ -31,13 +31,7 @@ const navItems: NavItem[] = [
     icon: BarChart3,
     requireAuth: true,
   },
-  {
-    href: "/dashboard/account-management",
-    label: "帳號管理",
-    icon: Users,
-    requireAuth: true,
-    roles: ["admin"], // 未來可以用來限制權限
-  },
+  // 帳號管理已移至 Settings 齒輪副選單
   // 未來可以擴展更多功能
   // {
   //   href: "/inventory",
@@ -58,6 +52,7 @@ function UserActions() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState<{ username: string; role: string } | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     // 確保只在客戶端執行
@@ -73,14 +68,39 @@ function UserActions() {
     }
   }, []);
 
+  const handleSettingsClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsSettingsOpen(!isSettingsOpen);
+  };
+
+  const handleAccountManagement = () => {
+    router.push('/dashboard/account-management');
+    setIsSettingsOpen(false);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     // 清除 cookie
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     setIsAuthenticated(false);
     setUserInfo(null);
+    setIsSettingsOpen(false);
     router.push('/login');
   };
+
+  // 點擊外部關閉下拉選單
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (isSettingsOpen) {
+        setIsSettingsOpen(false);
+      }
+    };
+
+    if (isSettingsOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [isSettingsOpen]);
 
   return (
     <div className="flex items-center gap-4 ml-auto">
@@ -92,21 +112,40 @@ function UserActions() {
             <span>{userInfo?.username}</span>
           </div>
 
-          {/* Settings (未來功能) */}
-          <Button variant="ghost" size="icon" className="hidden sm:flex">
-            <Settings className="h-4 w-4" />
-          </Button>
+          {/* Settings with dropdown */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden sm:flex"
+              onClick={handleSettingsClick}
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
 
-          {/* Logout */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">登出</span>
-          </Button>
+            {/* Settings dropdown */}
+            {isSettingsOpen && (
+              <div className="absolute right-0 top-full z-50 mt-1 min-w-[180px] rounded-lg border-2 border-gray-200 bg-white p-2 text-gray-900 shadow-lg">
+                <button
+                  onClick={handleAccountManagement}
+                  className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                >
+                  <Users className="h-4 w-4" />
+                  帳號管理
+                </button>
+                <div className="my-1 h-px bg-gray-200"></div>
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-red-50 hover:text-red-700 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  登出
+                </button>
+              </div>
+            )}
+          </div>
+
+
         </>
       ) : (
         <Link href="/login">

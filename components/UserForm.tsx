@@ -30,6 +30,7 @@ interface User {
   username: string;
   email: string;
   role: string;
+  last_login_at: string | null;
   created_at: string;
 }
 
@@ -40,14 +41,21 @@ interface UserFormProps {
   user?: User | null;
 }
 
-const userSchema = z.object({
+const createUserSchema = z.object({
   username: z.string().min(1, "使用者名稱為必填"),
   email: z.string().email("請輸入有效的電子郵件"),
-  password: z.string().min(8, "密碼至少需要8個字符").optional(),
+  password: z.string().min(8, "密碼至少需要8個字符"),
   role: z.enum(["user", "admin"]).optional(),
 });
 
-type UserFormData = z.infer<typeof userSchema>;
+const editUserSchema = z.object({
+  username: z.string().min(1, "使用者名稱為必填"),
+  email: z.string().email("請輸入有效的電子郵件"),
+  password: z.string().optional(),
+  role: z.enum(["user", "admin"]).optional(),
+});
+
+type UserFormData = z.infer<typeof createUserSchema | typeof editUserSchema>;
 
 export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormProps) {
   const [loading, setLoading] = useState(false);
@@ -99,7 +107,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
   const canEditThisUserRole = canEditRole && !isEditingSelf;
 
   const form = useForm<UserFormData>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(isEditing ? editUserSchema : createUserSchema),
     defaultValues: {
       username: "",
       email: "",

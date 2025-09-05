@@ -35,6 +35,7 @@ interface User {
   username: string;
   email: string;
   role: string;
+  last_login_at: string | null;
   created_at: string;
 }
 
@@ -150,6 +151,7 @@ export default function AccountManagementPage() {
                   <TableHead>使用者名稱</TableHead>
                   <TableHead>電子郵件</TableHead>
                   <TableHead>角色</TableHead>
+                  <TableHead>最後登入時間</TableHead>
                   <TableHead>建立時間</TableHead>
                   <TableHead>操作</TableHead>
                 </TableRow>
@@ -174,6 +176,9 @@ export default function AccountManagementPage() {
                           ? '管理員'
                           : '一般用戶'}
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      {user.last_login_at ? new Date(user.last_login_at).toLocaleString() : '從未登入'}
                     </TableCell>
                     <TableCell>
                       {new Date(user.created_at).toLocaleString()}
