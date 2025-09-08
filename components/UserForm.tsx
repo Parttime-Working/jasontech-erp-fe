@@ -29,7 +29,7 @@ interface User {
   id: number;
   username: string;
   email: string;
-  role: string;
+  level: string;
   last_login_at: string | null;
   created_at: string;
 }
@@ -45,14 +45,14 @@ const createUserSchema = z.object({
   username: z.string().min(1, "使用者名稱為必填"),
   email: z.string().email("請輸入有效的電子郵件"),
   password: z.string().min(8, "密碼至少需要8個字符"),
-  role: z.enum(["user", "admin"]).optional(),
+  level: z.enum(["user", "admin", "super_admin"]).optional(),
 });
 
 const editUserSchema = z.object({
   username: z.string().min(1, "使用者名稱為必填"),
   email: z.string().email("請輸入有效的電子郵件"),
   password: z.string().optional(),
-  role: z.enum(["user", "admin"]).optional(),
+  level: z.enum(["user", "admin", "super_admin"]).optional(),
 });
 
 type UserFormData = z.infer<typeof createUserSchema | typeof editUserSchema>;
@@ -73,13 +73,13 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
         return;
       }
 
-      const decoded: { role?: string } = jwtDecode(token);
+      const decoded: { level?: string } = jwtDecode(token);
 
-      // 如果 token 中沒有 role 字段，清除狀態
-      if (!decoded.role) {
+      // 如果 token 中沒有 level 字段，清除狀態
+      if (!decoded.level) {
         setCurrentUserRole(null);
       } else {
-        setCurrentUserRole(decoded.role);
+        setCurrentUserRole(decoded.level);
       }
     } catch (error) {
       // 靜默處理 token 解析錯誤，避免洩露敏感信息
@@ -88,7 +88,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
   }, []);
 
   const canEditRole = currentUserRole === "admin";
-  const isSuperAdmin = user?.id === 1 && user?.role === "admin";
+  const isSuperAdmin = user?.id === 1 && user?.level === "super_admin";
 
   // 檢查是否正在編輯自己的帳號
   const isEditingSelf = (() => {
@@ -112,7 +112,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
       username: "",
       email: "",
       password: "",
-      role: "user",
+      level: "user",
     },
   });
 
@@ -123,7 +123,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
         username: user.username || "",
         email: user.email || "",
         password: "",
-        role: (user.role as "user" | "admin") || "user",
+        level: (user.level as "user" | "admin" | "super_admin") || "user",
       });
     } else {
       // 新增用戶時重置為空值
@@ -131,7 +131,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
         username: "",
         email: "",
         password: "",
-        role: "user",
+        level: "user",
       });
     }
   }, [user, form]);
@@ -151,7 +151,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
         username: data.username,
         email: data.email,
         ...(data.password && { password: data.password }),
-        ...(data.role && { role: data.role }),
+        ...(data.level && { level: data.level }),
       };
 
       if (isEditing && user) {
@@ -252,7 +252,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
 
             <FormField
               control={form.control}
-              name="role"
+              name="level"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>角色</FormLabel>
@@ -264,6 +264,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
                     >
                       <option value="user">一般用戶</option>
                       <option value="admin">管理員</option>
+                      <option value="super_admin">最高管理員</option>
                     </select>
                   </FormControl>
                   {!canEditRole && (

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Package2, LogOut, User, Settings, Home, Users, BarChart3 } from "lucide-react";
+import { Menu, Package2, LogOut, User, Settings, Home, Users, BarChart3, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
@@ -31,6 +31,18 @@ const navItems: NavItem[] = [
     icon: BarChart3,
     requireAuth: true,
   },
+  {
+    href: "/dashboard/role-management",
+    label: "角色管理",
+    icon: Users,
+    requireAuth: true,
+  },
+  {
+    href: "/dashboard/permission-management",
+    label: "權限管理",
+    icon: Shield,
+    requireAuth: true,
+  },
   // 帳號管理已移至 Settings 齒輪副選單
   // 未來可以擴展更多功能
   // {
@@ -51,7 +63,7 @@ const navItems: NavItem[] = [
 function UserActions() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userInfo, setUserInfo] = useState<{ username: string; role: string } | null>(null);
+  const [userInfo, setUserInfo] = useState<{ username: string; level: string } | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
@@ -64,7 +76,7 @@ function UserActions() {
     // 這裡可以解析 JWT token 獲取用戶資訊
     if (token) {
       // 暫時設定假資料，未來可以從 token 解析
-      setUserInfo({ username: "admin", role: "admin" });
+      setUserInfo({ username: "admin", level: "admin" });
     }
   }, []);
 
@@ -160,14 +172,14 @@ function UserActions() {
 function NavigationItems() {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userInfo, setUserInfo] = useState<{ username: string; role: string } | null>(null);
+  const [userInfo, setUserInfo] = useState<{ username: string; level: string } | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
     if (token) {
-      setUserInfo({ username: "admin", role: "admin" });
+      setUserInfo({ username: "admin", level: "admin" });
     }
   }, []);
 
@@ -177,7 +189,7 @@ function NavigationItems() {
     if (item.requireAuth && !isAuthenticated) return false;
 
     // 如果有角色限制，檢查用戶角色（未來功能）
-    if (item.roles && userInfo && !item.roles.includes(userInfo.role)) {
+    if (item.roles && userInfo && !item.roles.includes(userInfo.level)) {
       return false;
     }
 

@@ -34,7 +34,7 @@ interface User {
   id: number;
   username: string;
   email: string;
-  role: string;
+  level: string;
   last_login_at: string | null;
   created_at: string;
 }
@@ -164,15 +164,15 @@ export default function AccountManagementPage() {
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        user.id === 1 && user.role === 'admin'
+                        user.id === 1 && user.level === 'super_admin'
                           ? 'bg-red-100 text-red-800'
-                          : user.role === 'admin'
+                          : user.level === 'admin'
                           ? 'bg-purple-100 text-purple-800'
                           : 'bg-blue-100 text-blue-800'
                       }`}>
-                        {user.id === 1 && user.role === 'admin'
+                        {user.id === 1 && user.level === 'super_admin'
                           ? '最高管理員'
-                          : user.role === 'admin'
+                          : user.level === 'admin'
                           ? '管理員'
                           : '一般用戶'}
                       </span>
@@ -192,7 +192,7 @@ export default function AccountManagementPage() {
                       >
                         編輯
                       </Button>
-                      {!(user.id === 1 && user.role === 'admin') && (
+                      {!(user.id === 1 && user.level === 'super_admin') && (
                         <Button
                           variant="destructive"
                           size="sm"
