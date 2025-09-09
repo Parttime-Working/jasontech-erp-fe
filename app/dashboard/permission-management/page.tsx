@@ -232,7 +232,7 @@ export default function PermissionManagementPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">活躍權限</CardTitle>
+              <CardTitle className="text-sm font-medium">啟用權限</CardTitle>
               <Shield className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -240,7 +240,7 @@ export default function PermissionManagementPage() {
                 {permissions.filter(p => p.status === 'active').length}
               </div>
               <p className="text-xs text-muted-foreground">
-                目前活躍的權限
+                目前啟用的權限
               </p>
             </CardContent>
           </Card>
@@ -321,7 +321,7 @@ export default function PermissionManagementPage() {
                       </TableCell>
                       <TableCell>
                         <Badge variant={permission.status === 'active' ? 'default' : 'secondary'}>
-                          {permission.status === 'active' ? '活躍' : '停用'}
+                          {permission.status === 'active' ? '啟用' : '停用'}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -473,7 +473,7 @@ export default function PermissionManagementPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">活躍</SelectItem>
+                      <SelectItem value="active">啟用</SelectItem>
                       <SelectItem value="inactive">停用</SelectItem>
                     </SelectContent>
                   </Select>
@@ -577,7 +577,7 @@ export default function PermissionManagementPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">活躍</SelectItem>
+                      <SelectItem value="active">啟用</SelectItem>
                       <SelectItem value="inactive">停用</SelectItem>
                     </SelectContent>
                   </Select>

@@ -235,7 +235,7 @@ export default function RoleManagementPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">活躍角色</CardTitle>
+              <CardTitle className="text-sm font-medium">啟用角色</CardTitle>
               <Shield className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -243,7 +243,7 @@ export default function RoleManagementPage() {
                 {roles.filter(role => role.status === 'active').length}
               </div>
               <p className="text-xs text-muted-foreground">
-                目前活躍的角色
+                目前啟用的角色
               </p>
             </CardContent>
           </Card>
@@ -292,7 +292,7 @@ export default function RoleManagementPage() {
                     <TableCell className="max-w-xs truncate">{role.description}</TableCell>
                     <TableCell>
                       <Badge variant={role.status === 'active' ? 'default' : 'secondary'}>
-                        {role.status === 'active' ? '活躍' : '停用'}
+                        {role.status === 'active' ? '啟用' : '停用'}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -404,7 +404,7 @@ export default function RoleManagementPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">活躍</SelectItem>
+                      <SelectItem value="active">啟用</SelectItem>
                       <SelectItem value="inactive">停用</SelectItem>
                     </SelectContent>
                   </Select>
@@ -472,7 +472,7 @@ export default function RoleManagementPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">活躍</SelectItem>
+                      <SelectItem value="active">啟用</SelectItem>
                       <SelectItem value="inactive">停用</SelectItem>
                     </SelectContent>
                   </Select>

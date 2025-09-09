@@ -59,7 +59,7 @@ const navItems: NavItem[] = [
   // },
 ];
 
-// 用戶相關的動態組件（僅在客戶端渲染）
+// 使用者相關的動態組件（僅在客戶端渲染）
 function UserActions() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -73,7 +73,7 @@ function UserActions() {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
-    // 這裡可以解析 JWT token 獲取用戶資訊
+    // 這裡可以解析 JWT token 獲取使用者資訊
     if (token) {
       // 暫時設定假資料，未來可以從 token 解析
       setUserInfo({ username: "admin", level: "admin" });
@@ -185,10 +185,10 @@ function NavigationItems() {
 
   // 過濾導航項目
   const visibleNavItems = navItems.filter(item => {
-    // 如果需要認證但用戶未登入，不顯示
+    // 如果需要認證但使用者未登入，不顯示
     if (item.requireAuth && !isAuthenticated) return false;
 
-    // 如果有角色限制，檢查用戶角色（未來功能）
+    // 如果有角色限制，檢查使用者角色（未來功能）
     if (item.roles && userInfo && !item.roles.includes(userInfo.level)) {
       return false;
     }

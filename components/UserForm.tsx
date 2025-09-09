@@ -103,7 +103,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
     }
   })();
 
-  // 超級管理員可以編輯其他用戶的角色，但不能編輯自己的角色
+  // 超級管理員可以編輯其他使用者的角色，但不能編輯自己的角色
   const canEditThisUserRole = canEditRole && !isEditingSelf;
 
   const form = useForm<UserFormData>({
@@ -126,7 +126,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
         level: (user.level as "user" | "admin" | "super_admin") || "user",
       });
     } else {
-      // 新增用戶時重置為空值
+      // 新增使用者時重置為空值
       form.reset({
         username: "",
         email: "",
@@ -262,7 +262,7 @@ export default function UserForm({ isOpen, onClose, onSuccess, user }: UserFormP
                       disabled={!canEditThisUserRole}
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      <option value="user">一般用戶</option>
+                      <option value="user">一般使用者</option>
                       <option value="admin">管理員</option>
                       <option value="super_admin">最高管理員</option>
                     </select>

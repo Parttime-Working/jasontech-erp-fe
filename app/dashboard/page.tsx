@@ -18,6 +18,7 @@ interface UserInfo {
 export default function DashboardPage() {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,25 +34,51 @@ export default function DashboardPage() {
       if (typeof window === 'undefined') return;
 
       const token = localStorage.getItem('token') || getCookie('token');
+      console.log('檢查身份驗證，token:', token ? '存在' : '不存在');
 
       if (!token) {
+        console.log('沒有 token，導向登入頁面');
+        setLoading(false);
         router.push('/login');
         return;
       }
 
       try {
-        // 這裡可以呼叫 API 驗證 token 並獲取使用者資訊
-        // 暫時先設定假資料
-        setUserInfo({
-          username: "admin",
-          email: "admin@jasontech.com"
+        console.log('開始驗證 token...');
+        // 呼叫 API 驗證 token
+        const response = await fetch('/api/auth/verify', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         });
+
+        console.log('驗證回應狀態:', response.status);
+
+        if (response.ok) {
+          const userData = await response.json();
+          console.log('驗證成功，使用者資料:', userData);
+          setUserInfo({
+            username: userData.user?.username || userData.username || "admin",
+            email: userData.user?.email || userData.email || "admin@jasontech.com"
+          });
+          setIsAuthenticated(true);
+        } else {
+          console.log('Token 無效，清除並導向登入');
+          // Token 無效
+          localStorage.removeItem('token');
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+          router.push('/login');
+          return;
+        }
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('token');
         // 清除 cookie
         document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         router.push('/login');
+        return;
       } finally {
         setLoading(false);
       }
@@ -62,15 +89,23 @@ export default function DashboardPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    // 清除 cookie
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     router.push('/login');
   };
 
+  // 如果正在載入或未通過身份驗證，顯示載入畫面或返回 null
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg">載入中...</div>
       </div>
     );
+  }
+
+  // 如果未通過身份驗證，不顯示任何內容（將被重定向到登入頁面）
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
@@ -140,7 +175,7 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">活躍用戶</CardTitle>
+              <CardTitle className="text-sm font-medium">啟用使用者</CardTitle>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

@@ -174,7 +174,7 @@ export default function AccountManagementPage() {
                           ? '最高管理員'
                           : user.level === 'admin'
                           ? '管理員'
-                          : '一般用戶'}
+                          : '一般使用者'}
                       </span>
                     </TableCell>
                     <TableCell>
