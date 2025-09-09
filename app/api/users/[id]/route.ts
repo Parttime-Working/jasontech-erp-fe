@@ -1,95 +1,66 @@
-import { NextResponse } from "next/server";
-import axios from "axios";
+import { NextRequest, NextResponse } from "next/server";
+import { withAuth, authenticatedFetch } from '@/lib/auth';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  try {
-    const authorization = req.headers.get('authorization');
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  return withAuth(request, async (token) => {
+    try {
+      const response = await authenticatedFetch(`/api/users/${params.id}`, token);
 
-    if (!authorization) {
-      return NextResponse.json({ error: "Authorization header required" }, { status: 401 });
+      if (!response.ok) {
+        const errorData = await response.json();
+        return NextResponse.json(errorData, { status: response.status });
+      }
+
+      const data = await response.json();
+      return NextResponse.json(data);
+    } catch (error) {
+      console.error("獲取使用者失敗:", error);
+      return NextResponse.json({ error: "內部伺服器錯誤" }, { status: 500 });
     }
-
-    const response = await axios.get(`${process.env.BACKEND_URL}/api/users/${params.id}`, {
-      headers: {
-        Authorization: authorization,
-      },
-    });
-
-    return NextResponse.json(response.data, { status: response.status });
-
-  } catch (error) {
-    console.error("Get user by ID API error:", error);
-
-    if (axios.isAxiosError(error)) {
-      return NextResponse.json(
-        { error: error.response?.data?.error || "An error occurred while fetching user" },
-        { status: error.response?.status || 500 }
-      );
-    } else {
-      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-    }
-  }
+  });
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  try {
-    const authorization = req.headers.get('authorization');
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  return withAuth(request, async (token) => {
+    try {
+      const body = await request.json();
 
-    if (!authorization) {
-      return NextResponse.json({ error: "Authorization header required" }, { status: 401 });
+      const response = await authenticatedFetch(`/api/users/${params.id}`, token, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return NextResponse.json(errorData, { status: response.status });
+      }
+
+      const data = await response.json();
+      return NextResponse.json(data);
+    } catch (error) {
+      console.error("更新使用者失敗:", error);
+      return NextResponse.json({ error: "內部伺服器錯誤" }, { status: 500 });
     }
-
-    const body = await req.json();
-
-    const response = await axios.put(`${process.env.BACKEND_URL}/api/users/${params.id}`, body, {
-      headers: {
-        Authorization: authorization,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    return NextResponse.json(response.data, { status: response.status });
-
-  } catch (error) {
-    console.error("Update user API error:", error);
-
-    if (axios.isAxiosError(error)) {
-      return NextResponse.json(
-        { error: error.response?.data?.error || "An error occurred while updating user" },
-        { status: error.response?.status || 500 }
-      );
-    } else {
-      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-    }
-  }
+  });
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  try {
-    const authorization = req.headers.get('authorization');
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  return withAuth(request, async (token) => {
+    try {
+      const response = await authenticatedFetch(`/api/users/${params.id}`, token, {
+        method: 'DELETE',
+      });
 
-    if (!authorization) {
-      return NextResponse.json({ error: "Authorization header required" }, { status: 401 });
+      if (!response.ok) {
+        const errorData = await response.json();
+        return NextResponse.json(errorData, { status: response.status });
+      }
+
+      const data = await response.json();
+      return NextResponse.json(data);
+    } catch (error) {
+      console.error("刪除使用者失敗:", error);
+      return NextResponse.json({ error: "內部伺服器錯誤" }, { status: 500 });
     }
-
-    const response = await axios.delete(`${process.env.BACKEND_URL}/api/users/${params.id}`, {
-      headers: {
-        Authorization: authorization,
-      },
-    });
-
-    return NextResponse.json(response.data, { status: response.status });
-
-  } catch (error) {
-    console.error("Delete user API error:", error);
-
-    if (axios.isAxiosError(error)) {
-      return NextResponse.json(
-        { error: error.response?.data?.error || "An error occurred while deleting user" },
-        { status: error.response?.status || 500 }
-      );
-    } else {
-      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-    }
-  }
+  });
 }

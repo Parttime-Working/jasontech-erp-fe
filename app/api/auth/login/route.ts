@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const { username, password } = body;
 
     // 呼叫後端 API Server，使用環境變數來避免硬編碼 URL
-    const response = await axios.post(`${process.env.BACKEND_URL}/auth/login`, {
+    const response = await axios.post(`${process.env.BACKEND_URL}/api/auth/login`, {
       username,
       password,
     });

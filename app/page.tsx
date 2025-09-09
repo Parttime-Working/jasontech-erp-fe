@@ -6,15 +6,61 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // 確保只在客戶端執行
-    if (typeof window === 'undefined') return;
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      return null;
+    };
 
-    // 總是顯示首頁，不自動跳轉
-    setLoading(false);
-  }, []);
+    const checkAuth = async () => {
+      // 確保只在客戶端執行
+      if (typeof window === 'undefined') return;
+
+      const token = localStorage.getItem('token') || getCookie('token');
+
+      if (!token) {
+        setLoading(false);
+        router.push('/login');
+        return;
+      }
+
+      try {
+        // 呼叫 API 驗證 token
+        const response = await fetch('/api/auth/verify', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          setIsAuthenticated(true);
+        } else {
+          // Token 無效
+          localStorage.removeItem('token');
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+          router.push('/login');
+          return;
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('token');
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        router.push('/login');
+        return;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   // 在載入期間顯示載入狀態
   if (loading) {
@@ -23,6 +69,11 @@ export default function Home() {
         <p>載入中...</p>
       </div>
     );
+  }
+
+  // 如果未通過身份驗證，不顯示任何內容（將被重定向到登入頁面）
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
