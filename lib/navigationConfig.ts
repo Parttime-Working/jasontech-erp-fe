@@ -44,7 +44,7 @@ export const navigationConfig: NavItem[] = [
     icon: 'BarChart3',
     requireAuth: true,
     showInNav: true,
-    showInSidebar: false,
+    showInSidebar: false,  // 不顯示 sidebar，完全佔據全寬
   },
   {
     id: 'system-management',
