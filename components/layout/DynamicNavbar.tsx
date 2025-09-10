@@ -31,18 +31,19 @@ const navItems: NavItem[] = [
     icon: BarChart3,
     requireAuth: true,
   },
-  {
-    href: "/dashboard/role-management",
-    label: "角色管理",
-    icon: Users,
-    requireAuth: true,
-  },
-  {
-    href: "/dashboard/permission-management",
-    label: "權限管理",
-    icon: Shield,
-    requireAuth: true,
-  },
+  // 角色管理和權限管理已移至系統管理 sidebar
+  // {
+  //   href: "/dashboard/role-management",
+  //   label: "角色管理",
+  //   icon: Users,
+  //   requireAuth: true,
+  // },
+  // {
+  //   href: "/dashboard/permission-management",
+  //   label: "權限管理",
+  //   icon: Shield,
+  //   requireAuth: true,
+  // },
   // 帳號管理已移至 Settings 齒輪副選單
   // 未來可以擴展更多功能
   // {
@@ -85,7 +86,7 @@ function UserActions() {
     setIsSettingsOpen(!isSettingsOpen);
   };
 
-  const handleAccountManagement = () => {
+  const handleSystemManagement = () => {
     router.push('/dashboard/account-management');
     setIsSettingsOpen(false);
   };
@@ -139,11 +140,11 @@ function UserActions() {
             {isSettingsOpen && (
               <div className="absolute right-0 top-full z-50 mt-1 min-w-[180px] rounded-lg border-2 border-gray-200 bg-white p-2 text-gray-900 shadow-lg">
                 <button
-                  onClick={handleAccountManagement}
+                  onClick={handleSystemManagement}
                   className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors"
                 >
-                  <Users className="h-4 w-4" />
-                  帳號管理
+                  <Settings className="h-4 w-4" />
+                  系統管理
                 </button>
                 <div className="my-1 h-px bg-gray-200"></div>
                 <button
