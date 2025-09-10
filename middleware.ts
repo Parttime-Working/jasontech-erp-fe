@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getProtectedPaths } from '@/lib/navigationConfig';
 
 export function middleware(request: NextRequest) {
     const token = request.cookies.get('token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
-    const protectedPaths = ['/dashboard', '/settings/account-management', '/settings/role-management', '/settings/permission-management'];
+    const protectedPaths = getProtectedPaths();
 
     if (protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
         if (!token) {

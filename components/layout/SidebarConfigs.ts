@@ -1,76 +1,34 @@
 // 圖標名稱類型定義
 export type IconName = "Users" | "Shield" | "Settings" | "BarChart3" | "FileText" | "TrendingUp" | "Package" | "ShoppingCart";
 
-// 系統管理模組配置
-export const systemManagementConfig = {
+// 從統一配置生成側邊欄配置
+import { getSidebarConfigs } from "@/lib/navigationConfig";
+
+// 生成側邊欄配置
+const sidebarConfigsData = getSidebarConfigs();
+
+// 系統管理模組配置 - 從統一配置生成
+export const systemManagementConfig = sidebarConfigsData.find(item => item.key === 'system-management')?.config || {
   title: "系統管理",
   titleIcon: "Settings" as IconName,
-  items: [
-    {
-      href: "/settings/account-management",
-      label: "帳號設定",
-      icon: "Users" as IconName,
-    },
-    {
-      href: "/settings/role-management",
-      label: "角色管理",
-      icon: "Settings" as IconName,
-    },
-    {
-      href: "/settings/permission-management",
-      label: "權限管理",
-      icon: "Shield" as IconName,
-    },
-  ],
-  showOnPaths: [
-    "/settings/account-management",
-    "/settings/role-management",
-    "/settings/permission-management"
-  ],
+  items: [],
+  showOnPaths: [],
 };
 
-// 商業智慧模組配置
-export const businessIntelligenceConfig = {
+// 商業智慧模組配置 - 從統一配置生成
+export const businessIntelligenceConfig = sidebarConfigsData.find(item => item.key === 'business-intelligence')?.config || {
   title: "商業智慧",
   titleIcon: "BarChart3" as IconName,
-  items: [
-    {
-      href: "/dashboard/analytics",
-      label: "數據分析",
-      icon: "BarChart3" as IconName,
-    },
-    {
-      href: "/dashboard/reports",
-      label: "報表中心",
-      icon: "FileText" as IconName,
-      badge: "新",
-    },
-    {
-      href: "/dashboard/trends",
-      label: "趨勢分析",
-      icon: "TrendingUp" as IconName,
-    },
-  ],
-  showOnPaths: ["/dashboard/analytics", "/dashboard/reports", "/dashboard/trends"],
+  items: [],
+  showOnPaths: [],
 };
 
-// 庫存管理模組配置
-export const inventoryConfig = {
+// 庫存管理模組配置 - 從統一配置生成
+export const inventoryConfig = sidebarConfigsData.find(item => item.key === 'inventory')?.config || {
   title: "庫存管理",
   titleIcon: "Package" as IconName,
-  items: [
-    {
-      href: "/dashboard/inventory",
-      label: "庫存總覽",
-      icon: "Package" as IconName,
-    },
-    {
-      href: "/dashboard/products",
-      label: "商品管理",
-      icon: "ShoppingCart" as IconName,
-    },
-  ],
-  showOnPaths: ["/dashboard/inventory", "/dashboard/products"],
+  items: [],
+  showOnPaths: [],
 };
 
 // 配置集合

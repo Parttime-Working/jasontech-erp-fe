@@ -4,9 +4,23 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Package2, LogOut, User, Settings, Home, Users, BarChart3, Shield } from "lucide-react";
+import { Menu, Package2, LogOut, User, Settings, Home, Users, BarChart3, Shield, Package, ShoppingCart, FileText, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { getNavItems } from "@/lib/navigationConfig";
+
+// Icon 映射
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Home,
+  BarChart3,
+  Settings,
+  Users,
+  Shield,
+  Package,
+  ShoppingCart,
+  FileText,
+  TrendingUp,
+};
 
 // 定義導航項目的類型
 interface NavItem {
@@ -14,51 +28,23 @@ interface NavItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   requireAuth: boolean;
-  roles?: string[]; // 未來可以加入角色控制
+  roles?: string[];
 }
 
-// 導航項目配置
-const navItems: NavItem[] = [
-  {
-    href: "/",
-    label: "首頁",
-    icon: Home,
-    requireAuth: false,
-  },
-  {
-    href: "/dashboard",
-    label: "主控台",
-    icon: BarChart3,
-    requireAuth: true,
-  },
-  // 角色管理和權限管理已移至系統管理 sidebar
-  // {
-  //   href: "/dashboard/role-management",
-  //   label: "角色管理",
-  //   icon: Users,
-  //   requireAuth: true,
-  // },
-  // {
-  //   href: "/dashboard/permission-management",
-  //   label: "權限管理",
-  //   icon: Shield,
-  //   requireAuth: true,
-  // },
-  // 帳號管理已移至 Settings 齒輪副選單
-  // 未來可以擴展更多功能
-  // {
-  //   href: "/inventory",
-  //   label: "庫存管理",
-  //   icon: Package,
-  //   requireAuth: true,
-  // },
-  // {
-  //   href: "/reports",
-  //   label: "報表",
-  //   icon: FileText,
-  //   requireAuth: true,
-  // },
-];
+// 從統一配置生成導航項目
+const generateNavItems = (): NavItem[] => {
+  const configItems = getNavItems();
+  return configItems.map(item => ({
+    href: item.href,
+    label: item.label,
+    icon: iconMap[item.icon] || Settings, // 預設使用 Settings icon
+    requireAuth: item.requireAuth,
+    roles: item.roles,
+  }));
+};
+
+// 動態生成導航項目
+const navItems: NavItem[] = generateNavItems();
 
 // 使用者相關的動態組件（僅在客戶端渲染）
 function UserActions() {
