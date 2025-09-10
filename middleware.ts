@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
     const token = request.cookies.get('token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
-    const protectedPaths = ['/dashboard', '/dashboard/account-management'];
+    const protectedPaths = ['/dashboard', '/settings/account-management', '/settings/role-management', '/settings/permission-management'];
 
     if (protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
         if (!token) {

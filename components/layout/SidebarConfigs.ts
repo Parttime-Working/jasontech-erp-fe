@@ -7,25 +7,25 @@ export const systemManagementConfig = {
   titleIcon: "Settings" as IconName,
   items: [
     {
-      href: "/dashboard/account-management",
+      href: "/settings/account-management",
       label: "帳號設定",
       icon: "Users" as IconName,
     },
     {
-      href: "/dashboard/role-management",
+      href: "/settings/role-management",
       label: "角色管理",
       icon: "Settings" as IconName,
     },
     {
-      href: "/dashboard/permission-management",
+      href: "/settings/permission-management",
       label: "權限管理",
       icon: "Shield" as IconName,
     },
   ],
   showOnPaths: [
-    "/dashboard/account-management",
-    "/dashboard/role-management",
-    "/dashboard/permission-management"
+    "/settings/account-management",
+    "/settings/role-management",
+    "/settings/permission-management"
   ],
 };
 

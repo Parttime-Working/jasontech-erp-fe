@@ -87,7 +87,7 @@ function UserActions() {
   };
 
   const handleSystemManagement = () => {
-    router.push('/dashboard/account-management');
+    router.push('/settings/account-management');
     setIsSettingsOpen(false);
   };
 

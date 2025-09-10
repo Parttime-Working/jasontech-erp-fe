@@ -8,7 +8,7 @@ import { LucideIcon, Users, Shield, Settings, BarChart3, FileText, TrendingUp, P
 import { IconName } from "./SidebarConfigs";
 
 // 圖標映射
-const iconMap: Record<IconName, LucideIcon> = {
+const iconMap: Record<string, LucideIcon> = {
   Users,
   Shield,
   Settings,
@@ -22,7 +22,7 @@ const iconMap: Record<IconName, LucideIcon> = {
 export interface SidebarItem {
   href: string;
   label: string;
-  icon: IconName;
+  icon: string;
   badge?: string | number;
   disabled?: boolean;
 }
@@ -30,11 +30,12 @@ export interface SidebarItem {
 export interface SidebarProps {
   className?: string;
   title?: string;
-  titleIcon?: IconName;
+  titleIcon?: string;
   items: SidebarItem[];
   showOnPaths?: string[]; // 指定在哪些路徑下顯示 sidebar
   collapsible?: boolean;
   defaultCollapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
 export function Sidebar({
@@ -44,11 +45,12 @@ export function Sidebar({
   items,
   showOnPaths,
   collapsible = false,
-  defaultCollapsed = false
+  defaultCollapsed = false,
+  onCollapsedChange
 }: SidebarProps) {
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed || items.length === 0);
 
   useEffect(() => {
     setIsClient(true);
@@ -72,13 +74,24 @@ export function Sidebar({
     return () => window.removeEventListener('resize', handleResize);
   }, [defaultCollapsed]);
 
+  // 當 isCollapsed 改變時，調用 onCollapsedChange
+  useEffect(() => {
+    if (onCollapsedChange) {
+      onCollapsedChange(isCollapsed);
+    }
+  }, [isCollapsed, onCollapsedChange]);
+
   // 檢查是否應該顯示 sidebar
   const shouldShowSidebar = () => {
     if (!showOnPaths || showOnPaths.length === 0) {
-      // 如果沒有指定路徑，檢查是否在 items 中的任何一個路徑
-      return items.some(item =>
-        pathname === item.href || pathname.startsWith(item.href + '/')
-      );
+      // 如果沒有指定路徑，且 items 不為空，檢查是否在 items 中的任何一個路徑
+      if (items.length > 0) {
+        return items.some(item =>
+          pathname === item.href || pathname.startsWith(item.href + '/')
+        );
+      }
+      // 如果 items 為空，總是顯示一個窄的 sidebar
+      return true;
     }
 
     // 檢查當前路徑是否在指定的顯示路徑中
